@@ -109,7 +109,7 @@ await test('gql-queries', async (t) => {
 
   await t.test('Get non-existent resources by their id.', async (t) => {
     const { body: user1 } = await createUser(app);
-
+    console.log('user1', user1)
     const {
       body: { data, errors },
     } = await gqlQuery(app, {
@@ -138,6 +138,7 @@ await test('gql-queries', async (t) => {
       },
     });
 
+    console.log('data', data)
     t.ok(!errors);
     t.ok(data.post === null);
     t.ok(data.profile === null);
