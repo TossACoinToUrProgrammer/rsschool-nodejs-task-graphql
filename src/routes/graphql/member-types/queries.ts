@@ -1,7 +1,7 @@
 import { MemberType } from '../schemas.js';
-import { GraphQLID, GraphQLList } from 'graphql';
-import { UUIDType } from '../types/uuid.js';
+import { GraphQLList } from 'graphql';
 import { MemberTypeId } from '../types/memberType.js';
+import { getMemberType } from './helpers.js';
 
 export const memberTypesQuery = {
   type: new GraphQLList(MemberType),
@@ -15,13 +15,6 @@ export const memberTypeQuery = {
   type: MemberType,
   args: { id: { type: MemberTypeId } },
   resolve: async (parent, { id }, context, info) => {
-    const memberType = await context.prisma.memberType.findUnique({
-      where: { id },
-    });
-    if (!memberType) {
-      throw context.httpErrors.notFound();
-    }
-
-    return memberType;
+    return getMemberType(context.prisma, { id });
   },
 };

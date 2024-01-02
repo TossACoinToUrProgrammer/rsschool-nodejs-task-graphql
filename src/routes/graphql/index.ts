@@ -95,14 +95,6 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       if (result.errors) {
         const error = result.errors[0];
 
-        if (error.message === 'Not Found') {
-          reply.code(404);
-          return {
-            error: 'GraphQL execution error',
-            details: 'Not Found',
-          };
-        }
-
         reply.code(500);
         return {
           error: 'GraphQL execution error',

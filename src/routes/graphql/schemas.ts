@@ -2,11 +2,10 @@ import { Type } from '@fastify/type-provider-typebox';
 import {
   GraphQLBoolean,
   GraphQLFloat,
-  GraphQLID,
   GraphQLInt,
   GraphQLObjectType,
   GraphQLString,
-  GraphQLNullableType,
+  GraphQLList,
 } from 'graphql';
 import { UUIDType } from './types/uuid.js';
 import { MemberTypeId } from './types/memberType.js';
@@ -40,6 +39,15 @@ export const PostType = new GraphQLObjectType({
   },
 });
 
+export const MemberType = new GraphQLObjectType({
+  name: 'MemberType',
+  fields: {
+    id: { type: MemberTypeId },
+    discount: { type: GraphQLFloat },
+    postsLimitPerMonth: { type: GraphQLInt },
+  },
+});
+
 export const ProfileType = new GraphQLObjectType({
   name: 'Profile',
   fields: {
@@ -48,15 +56,7 @@ export const ProfileType = new GraphQLObjectType({
     userId: { type: UUIDType },
     isMale: { type: GraphQLBoolean },
     memberTypeId: { type: MemberTypeId },
-  },
-});
-
-export const MemberType = new GraphQLObjectType({
-  name: 'MemberType',
-  fields: {
-    id: { type: MemberTypeId },
-    discount: { type: GraphQLFloat },
-    postsLimitPerMonth: { type: GraphQLInt },
+    memberType: { type: MemberType },
   },
 });
 
@@ -69,10 +69,17 @@ export const DeleteResponse = new GraphQLObjectType({
 
 export const UserType = new GraphQLObjectType({
   name: 'User',
-  fields: {
+  fields: () => ({
     id: { type: UUIDType },
     name: { type: GraphQLString },
     balance: { type: GraphQLString },
     profile: { type: ProfileType },
-  },
+    posts: { type: new GraphQLList(PostType) },
+    userSubscribedTo: {
+      type: new GraphQLList(UserType),
+    },
+    subscribedToUser: {
+      type: new GraphQLList(UserType),
+    },
+  }),
 });

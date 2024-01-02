@@ -18,7 +18,7 @@ export const memberTypeQuery = {
       where: { id },
     });
     if (!memberType) {
-      throw context.httpErrors.notFound();
+      return null
     }
 
     return memberType;

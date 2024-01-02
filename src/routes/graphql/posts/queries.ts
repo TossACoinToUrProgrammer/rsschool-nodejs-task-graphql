@@ -18,7 +18,7 @@ export const postQuery = {
       where: { id },
     });
     if (!post) {
-      throw context.httpErrors.notFound();
+      return null
     }
 
     return post;
