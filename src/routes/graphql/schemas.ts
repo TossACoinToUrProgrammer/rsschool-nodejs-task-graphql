@@ -6,6 +6,10 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLList,
+  GraphQLInputObjectType,
+  GraphQLNonNull,
+  GraphQLScalarType,
+  Kind,
 } from 'graphql';
 import { UUIDType } from './types/uuid.js';
 import { MemberTypeId } from './types/memberType.js';
@@ -28,6 +32,59 @@ export const createGqlResponseSchema = {
     },
   ),
 };
+
+export const CreatePostInputType = new GraphQLInputObjectType({
+  name: 'CreatePostInput',
+  fields: {
+    authorId: { type: new GraphQLNonNull(UUIDType) },
+    content: { type: new GraphQLNonNull(GraphQLString) },
+    title: { type: new GraphQLNonNull(GraphQLString) },
+  },
+});
+
+export const CreateUserInputType = new GraphQLInputObjectType({
+  name: 'CreateUserInput',
+  fields: {
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    balance: { type: new GraphQLNonNull(GraphQLFloat) },
+  },
+});
+
+export const CreateProfileInputType = new GraphQLInputObjectType({
+  name: 'CreateProfileInput',
+  fields: {
+    yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
+    userId: { type: new GraphQLNonNull(UUIDType) },
+    isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
+    memberTypeId: { type: new GraphQLNonNull(GraphQLString) },
+  },
+});
+
+export const ChangePostInputType = new GraphQLInputObjectType({
+  name: 'ChangePostInput',
+  fields: {
+    title: { type: GraphQLString },
+    content: { type: GraphQLString },
+    memberTypeId: { type: MemberTypeId },
+  },
+});
+
+export const ChangeProfileInputType = new GraphQLInputObjectType({
+  name: 'ChangeProfileInput',
+  fields: {
+    yearOfBirth: { type: GraphQLInt },
+    isMale: { type: GraphQLBoolean },
+    memberTypeId: { type: GraphQLString },
+  },
+});
+
+export const ChangeUserInputType = new GraphQLInputObjectType({
+  name: 'ChangeUserInput',
+  fields: {
+    name: { type: GraphQLString },
+    balance: { type: GraphQLString },
+  },
+});
 
 export const PostType = new GraphQLObjectType({
   name: 'Post',
@@ -64,6 +121,22 @@ export const DeleteResponse = new GraphQLObjectType({
   name: 'Delete',
   fields: {
     deletedRecordId: { type: GraphQLString },
+  },
+});
+
+export const EmptyResponse = new GraphQLScalarType({
+  name: 'EmptyResponse',
+  serialize() {
+    return null;
+  },
+  parseValue() {
+    return null;
+  },
+  parseLiteral(ast) {
+    if (ast.kind === Kind.NULL) {
+      return null;
+    }
+    return undefined;
   },
 });
 

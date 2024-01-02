@@ -7,6 +7,8 @@ import {
   changeUserMutation,
   createUserMutation,
   deleteUserMutation,
+  subscribeToMutation,
+  unsubscribeFromMutation,
 } from './users/mutations.js';
 import { profileQuery, profilesQuery } from './profiles/queries.js';
 import {
@@ -48,6 +50,8 @@ const schema = new GraphQLSchema({
       createPost: createPostMutation,
       deletePost: deletePostMutation,
       changePost: changePostMutation,
+      subscribeTo: subscribeToMutation,
+      unsubscribeFrom: unsubscribeFromMutation,
     },
   }),
 });
@@ -72,7 +76,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           type: 'object',
           properties: {
             error: { type: 'string' },
-            details: { type: 'string' },
+            errors: { type: 'array' },
           },
         },
       },
@@ -93,12 +97,10 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 
       // Check for errors
       if (result.errors) {
-        const error = result.errors[0];
-
         reply.code(500);
         return {
           error: 'GraphQL execution error',
-          details: result.errors,
+          errors: result.errors,
         };
       }
 

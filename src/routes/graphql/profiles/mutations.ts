@@ -1,18 +1,20 @@
-import { DeleteResponse, ProfileType } from '../schemas.js';
+import {
+  ChangeProfileInputType,
+  CreateProfileInputType,
+  EmptyResponse,
+  ProfileType,
+} from '../schemas.js';
 import { GraphQLInt, GraphQLString, GraphQLID, GraphQLBoolean } from 'graphql';
 import { UUIDType } from '../types/uuid.js';
 
 export const createProfileMutation = {
   type: ProfileType,
   args: {
-    yearOfBirth: { type: GraphQLInt },
-    userId: { type: UUIDType },
-    isMale: { type: GraphQLBoolean },
-    memberTypeId: { type: GraphQLString },
+    dto: { type: CreateProfileInputType },
   },
-  resolve: async (parent, props, context, info) => {
+  resolve: async (parent, { dto }, context, info) => {
     const newProfile = await context.prisma.profile.create({
-      data: props,
+      data: dto,
     });
 
     return newProfile;
@@ -20,7 +22,7 @@ export const createProfileMutation = {
 };
 
 export const deleteProfileMutation = {
-  type: DeleteResponse,
+  type: EmptyResponse,
   args: {
     id: { type: UUIDType },
   },
@@ -29,7 +31,7 @@ export const deleteProfileMutation = {
       where: { id },
     });
 
-    return { deletedRecordId: id };
+    return null;
   },
 };
 
@@ -37,15 +39,12 @@ export const changeProfileMutation = {
   type: ProfileType,
   args: {
     id: { type: UUIDType },
-    yearOfBirth: { type: GraphQLInt },
-    userId: { type: UUIDType },
-    isMale: { type: GraphQLBoolean },
-    memberTypeId: { type: GraphQLString },
+    dto: { type: ChangeProfileInputType },
   },
-  resolve: async (parent, { id, ...body }, context, info) => {
+  resolve: async (parent, { id, dto }, context, info) => {
     const updatedProfile = await context.prisma.profile.update({
       where: { id },
-      data: body,
+      data: dto,
     });
 
     return updatedProfile;
